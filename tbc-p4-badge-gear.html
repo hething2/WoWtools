@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TBC Phase 4 Badge Gear Planner</title>
+<style>
+:root{--bg:#f4efe4;--card:#fffaf0;--tx:#2a2418;--mut:#7a6f58;--line:#d9ccaa;--acc:#b8892b;--gold:#b8892b;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14120e;--card:#1e1b15;--tx:#efe6d0;--mut:#a39a82;--line:#3a3426;--gold:#e0b84f}}
+:root[data-theme="dark"]{--bg:#14120e;--card:#1e1b15;--tx:#efe6d0;--mut:#a39a82;--line:#3a3426;--gold:#e0b84f}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 Georgia,"Times New Roman",serif}
+.wrap{max-width:900px;margin:0 auto;padding:18px 14px 40px}
+h1{font-size:26px;margin:0 0 2px;color:var(--gold);letter-spacing:.5px}
+.sub{color:var(--mut);margin:0 0 16px;font-size:14px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--tx);padding:8px 14px;border-radius:999px}
+button.on{background:var(--c);border-color:var(--c);color:#fff;font-weight:bold;text-shadow:0 1px 2px #0006}
+.lbl{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--mut);margin-top:12px}
+.card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--acc);border-radius:10px;padding:14px;margin:14px 0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.stat b{display:block;font-size:28px;color:var(--acc)}.stat span{font-size:12px;color:var(--mut)}
+.item{display:grid;grid-template-columns:1fr 46px;gap:2px 10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border:0}
+.nm{font-weight:bold;color:var(--tx);text-decoration:underline dotted var(--mut);text-underline-offset:3px}.nm:hover{color:var(--acc)}.leg a{color:var(--gold)}.sl{color:var(--mut);font-size:13px}
+.cost{text-align:right;font-weight:bold;font-size:18px;color:var(--acc)}
+.bar{grid-column:1/3;height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--acc)}
+.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:9px;margin-left:6px;vertical-align:middle;font-weight:normal;border:1px solid var(--acc);color:var(--acc)}
+.tag.bis{background:var(--acc);color:#fff}.tag.x{border-color:var(--mut);color:var(--mut)}
+.note{grid-column:1/3;font-size:12.5px;color:var(--mut)}
+.ov{display:grid;grid-template-columns:110px 1fr 40px;gap:6px 10px;align-items:center;margin:7px 0;font-size:14px}
+.stack{display:flex;height:18px;border-radius:5px;overflow:hidden;background:var(--line)}
+.stack i{display:block;height:100%}
+.leg{font-size:12px;color:var(--mut);margin-top:6px}
+.leg b{display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 4px 0 10px;vertical-align:middle}
+ul{margin:6px 0;padding-left:20px}li{margin:4px 0;color:var(--mut);font-size:13.5px}
+.foot{font-size:12.5px;color:var(--mut);margin-top:22px}.foot a{color:var(--gold)}
+@media(max-width:520px){.ov{grid-template-columns:84px 1fr 34px;font-size:13px}.stat b{font-size:22px}}
+</style></head><body><div class="wrap">
+<h1>⚔ Phase 4 Badge Gear Planner</h1>
+<p class="sub">G'eras badge vendor items that appear on Wowhead's Phase 4 (Zul'Aman) BiS lists</p>
+<div class="lbl">Class</div><div class="row" id="cls"></div>
+<div class="lbl" id="spl" style="display:none">Spec</div><div class="row" id="spc"></div>
+<div id="out"></div>
+<div class="foot">Costs from the G'eras Phase 4 table; "alternatives" are other badge items in each spec's main recommendation tables, one per slot. Badge earn rates are on the Overview tab.
+Sources: <a href="https://www.wowhead.com/tbc/guide/badge-of-justice-gear-currency-wow-burning-crusade-classic">Wowhead badge guide</a> and Wowhead's Phase 4 BiS guides. <button id="th" style="padding:2px 10px;font-size:12px">Toggle theme</button></div>
+</div>
+<script>
+// t: b=BiS, a=alternative, x=listed but not counted (same-slot swap / fallback / avoid). n=note
+const D={
+Shaman:{c:"#0070DE",s:{
+Elemental:[["Pantaloons of Arcane Annihilation","Legs",75,"b"],["Fetish of the Primal Gods","Off-hand",35,"b"],["Skycall Totem","Relic",20,"b"],["Pauldrons of the Furious Elements","Shoulders",60,"a"],["Cloak of Arcane Alacrity","Back",60,"a"],["Hauberk of the Furious Elements","Chest",75,"a"],["Studious Wraps","Hands",60,"a"],["Grips of Nature's Wrath","Hands",60,"x","Same slot as Studious Wraps, so not counted"]],
+Enhancement:[["Nyn'jah's Tabi Boots","Feet",60,"b"],["Stonebreaker's Totem","Relic",20,"b"],["Master Assassin Wristwraps","Wrist",35,"a","Enhancement page quotes 60"],["Trickster's Stickyfingers","Hands",60,"a"],["Shallow-grave Trousers","Legs",75,"a"],["Bloodlust Brooch","Trinket",41,"a"]],
+Restoration:[["Treads of the Life Path","Feet",60,"b"],["Essence of the Martyr","Trinket",41,"b"],["Cloak of Swift Reprieve","Back",60,"a"],["Man'kin'do's Belt","Waist",75,"a"],["Totem of Living Water","Relic",20,"a"],["Polished Waterscale Gloves","Hands",60,"x","Fallback list"],["Natural Life Leggings","Legs",75,"x","Fallback list"],["Tears of Heaven","Shield/off-hand",25,"x","Fallback list"]]}},
+Paladin:{c:"#F58CBA",s:{
+Protection:[["Slikk's Cloak of Placation","Back (best mitigation)",35,"b","Prot page quotes 60"],["Girdle of the Protector","Waist (best threat)",60,"b"],["Sabatons of the Righteous Defender","Feet (best threat)",60,"b"],["Libram of Divine Purpose","Relic (best threat)",20,"b"],["Libram of Repentance","Relic (best avoidance)",15,"b","Not in the G'eras table I fetched; cost from the Prot page"],["Chestguard of the Stoic Guardian","Chest",75,"a","Prot page quotes 60"],["Bracers of the Ancient Phalanx","Wrist",35,"a"],["Bonefist Gauntlets","Hands",60,"a"],["Unwavering Legguards","Legs",75,"a"],["Iron-tusk Girdle","Waist",60,"x","Competes with Girdle of the Protector, so not counted"]],
+Retribution:[["Choker of Vile Intent","Neck (hit)",25,"a"],["Bloodlust Brooch","Trinket",41,"a"],["Brooch of Deftness","Neck (hit)",35,"x","Alternative to the Choker (+10 badges); Ret page quotes 25"],["Libram of Divine Judgement","Relic",20,"x","Guide says do not use"]],
+Holy:[["Essence of the Martyr","Trinket",41,"b"],["Libram of Mending","Relic (Holy Light)",20,"a"],["Tears of Heaven","Off-hand",25,"x","Fallback list"],["Light-Bearer's Faith Shield","Shield",33,"x","Fallback list"]]}},
+Warrior:{c:"#C79C6E",s:{
+Fury:[["Dory's Embrace","Back",60,"b"],["Master Assassin Wristwraps","Wrist",35,"a","Warrior pages quote 60"],["Eternium Rage-shackles","Wrist",35,"x","Fallback list; pages quote 60"],["Bloodlust Brooch","Trinket",41,"x","Fallback list"],["Chain of Unleashed Rage","Waist",60,"x","Fallback list"]],
+Arms:[["Dory's Embrace","Back",60,"b"],["Master Assassin Wristwraps","Wrist",35,"a","Warrior pages quote 60"],["Eternium Rage-shackles","Wrist",35,"x","Fallback list; pages quote 60"],["Bloodlust Brooch","Trinket",41,"x","Fallback list"]],
+Protection:[["Brooch of Deftness","Neck (best overall)",35,"b"],["Bracers of the Ancient Phalanx","Wrist (best overall)",35,"b"],["Dory's Embrace","Back (best, no hit)",60,"b"],["Chain of Unleashed Rage","Waist (hit alternative)",60,"a","Prot page quotes 35"],["Slikk's Cloak of Placation","Back (best mitigation)",35,"x","Same slot as Dory's Embrace, so not counted; Prot page quotes 60"]]}},
+Warlock:{c:"#9482C9",s:{
+Destruction:[["Carved Witch Doctor's Stick","Wand",25,"b"],["Runed Spell-cuffs","Wrist",35,"a"],["Studious Wraps","Hands",60,"a"],["Fetish of the Primal Gods","Off-hand",35,"a"]],
+Affliction:[["Carved Witch Doctor's Stick","Wand",25,"b"],["Runed Spell-cuffs","Wrist",35,"a"],["Studious Wraps","Hands",60,"a"],["Fetish of the Primal Gods","Off-hand",35,"a"],["Voodoo-woven Belt","Waist",60,"x","Fallback list"]],
+Demonology:[["Icon of the Silver Crescent","Trinket",41,"b"],["Khadgar's Knapsack","Off-hand",25,"a"],["Orb of the Soul-Eater","Off-hand",25,"x","Same slot as Khadgar's Knapsack, so not counted"],["Carved Witch Doctor's Stick","Wand",25,"x","Rated BiS on the Affliction/Destruction pages, but not on Demonology's page, which is mostly Phase 3 text"]]}}};
+Object.assign(D,{
+Druid:{c:"#FF7D0A",s:{
+Balance:[["Pauldrons of Tribal Fury","Shoulders",60,"a"],["Blessed Elunite Coverings","Chest",75,"a"],["Armwraps of the Kaldorei Protector","Wrist",35,"a"],["Studious Wraps","Hands",60,"a"],["Starfire Waistband","Waist",60,"a"],["Pantaloons of Arcane Annihilation","Legs",75,"a"],["Moon-walkers","Feet",60,"a"],["Fetish of the Primal Gods","Off-hand",35,"a"],["Idol of the Unseen Moon","Relic",20,"a"],["Icon of the Silver Crescent","Trinket",41,"a","Cost not in the G'eras table I fetched; 41 from the other class pages"],["Runed Spell-cuffs","Wrist",35,"x","Same slot as Armwraps, so not counted"],["Grasp of the Moonkin","Hands",60,"x","Same slot as Studious Wraps, so not counted"],["Voodoo-woven Belt","Waist",60,"x","Same slot as Starfire Waistband, so not counted"],["Khadgar's Knapsack","Off-hand",25,"x","Same slot as Fetish, so not counted"]],
+"Feral DPS":[],
+"Feral Tank":[["Idol of Terror","Relic (best)",20,"b"],["Brooch of Deftness","Neck (best)",35,"b"],["Slikk's Cloak of Placation","Back (best tanking value)",35,"b"],["Band of the Swift Paw","Wrist",35,"a"],["Waistguard of the Great Beast","Waist",60,"a"],["Dory's Embrace","Back (best bear + cat hybrid)",60,"x","Same slot as Slikk's Cloak, so not counted"],["Nyn'jah's Tabi Boots","Feet",60,"x","Fallback list"],["Footwraps of Wild Encroachment","Feet",60,"x","Fallback list"],["Ring of Unyielding Force","Ring",25,"x","Fallback list; not in the G'eras table I fetched, cost from the Feral Tank page"]],
+Restoration:[["Essence of the Martyr","Trinket",41,"b"],["Wristguards of Tranquil Thought","Wrist",35,"a"],["Gnarled Ironwood Pauldrons","Shoulders",60,"a"],["Light-Blessed Bonds","Hands",60,"a"],["Tears of Heaven","Off-hand",25,"a"],["Gargon's Bracers of Peaceful Slumber","Wrist",35,"x","Fallback list; same slot as Wristguards"],["Pants of Splendid Recovery","Legs",75,"x","Fallback list"]]}},
+Hunter:{c:"#ABD473",s:{
+"Beast Mastery":[["Master Assassin Wristwraps","Wrist",35,"a","Hunter pages quote 25 in a table and 35 in text; G'eras table says 35"],["Nyn'jah's Tabi Boots","Feet (temporary hit option)",60,"a"],["Steadying Bracers","Wrist",35,"x","Same slot as Master Assassin Wristwraps, so not counted"],["Dory's Embrace","Back",60,"x","Fallback list"],["Blood Knight War Cloak","Back",25,"x","Fallback list; not in the G'eras table I fetched, cost from the hunter page"]],
+Marksmanship:[["Master Assassin Wristwraps","Wrist",35,"a","Hunter pages quote 25 in a table and 35 in text; G'eras table says 35"],["Nyn'jah's Tabi Boots","Feet (temporary hit option)",60,"a"],["Steadying Bracers","Wrist",35,"x","Same slot as Master Assassin Wristwraps, so not counted"],["Dory's Embrace","Back",60,"x","Fallback list"],["Blood Knight War Cloak","Back",25,"x","Fallback list; not in the G'eras table I fetched, cost from the hunter page"]],
+Survival:[["Bloodlust Brooch","Trinket",41,"a"],["Blood Knight War Cloak","Back",25,"a","Not in the G'eras table I fetched; cost from the Survival page"],["Choker of Vile Intent","Neck",25,"x","Fallback"],["Nyn'jah's Tabi Boots","Feet (temporary hit option)",60,"x","Fallback"]]}},
+Mage:{c:"#69CCF0",s:{
+Arcane:[["Carved Witch Doctor's Stick","Wand",25,"b"],["Fetish of the Primal Gods","Off-hand",35,"b"],["Cloak of Arcane Alacrity","Back",60,"a"],["Runed Spell-cuffs","Wrist",35,"a"],["Studious Wraps","Hands",60,"a"],["Voodoo-woven Belt","Waist",60,"a"],["Pantaloons of Arcane Annihilation","Legs",75,"a"],["Icon of the Silver Crescent","Trinket",41,"a","Cost not in the G'eras table I fetched; 41 from the other class pages"]],
+Fire:[["Carved Witch Doctor's Stick","Wand",25,"a","Pre-raid fallback on this page"],["Fetish of the Primal Gods","Off-hand",35,"a","Pre-raid fallback on this page"],["Cloak of Arcane Alacrity","Back",60,"a"],["Runed Spell-cuffs","Wrist",35,"a"],["Studious Wraps","Hands",60,"a"],["Voodoo-woven Belt","Waist",60,"a"],["Icon of the Silver Crescent","Trinket",41,"a"]],
+Frost:[["Carved Witch Doctor's Stick","Wand",25,"b"],["Fetish of the Primal Gods","Off-hand",35,"b"],["Cloak of Arcane Alacrity","Back",60,"a"],["Runed Spell-cuffs","Wrist",35,"a"],["Studious Wraps","Hands",60,"a"],["Voodoo-woven Belt","Waist",60,"a"],["Pantaloons of Arcane Annihilation","Legs",75,"a"],["Icon of the Silver Crescent","Trinket",41,"a"]]}},
+Priest:{c:"#9A9A9A",s:{
+Holy:[["Achromic Trousers of the Naaru","Legs (haste)",75,"b"],["Light-Blessed Bonds","Hands",60,"b"],["Essence of the Martyr","Trinket",41,"b"],["Wristguards of Tranquil Thought","Wrist",35,"a"],["Carved Witch Doctor's Stick","Wand",25,"a"],["Voodoo Shaker","Off-hand",35,"a"],["Cloak of Swift Reprieve","Back",60,"x","Fallback list"],["Tears of Heaven","Off-hand",25,"x","Fallback list; same slot as Voodoo Shaker"]],
+Shadow:[["Carved Witch Doctor's Stick","Wand",25,"b"],["Fetish of the Primal Gods","Off-hand",35,"b"],["Studious Wraps","Hands",60,"a"],["Pantaloons of Arcane Annihilation","Legs",75,"a"],["Orb of the Soul-Eater","Off-hand",25,"x","Same slot as Fetish, so not counted"],["Icon of the Silver Crescent","Trinket",41,"x","Fallback"],["Khadgar's Knapsack","Off-hand",25,"x","Fallback"]]}},
+Rogue:{c:"#C9B800",s:{
+Combat:[["Nyn'jah's Tabi Boots","Feet",60,"b"],["Choker of Vile Intent","Neck",25,"a"],["Master Assassin Wristwraps","Wrist",35,"a"],["Trickster's Stickyfingers","Hands",60,"a"],["Bloodlust Brooch","Trinket (short fights)",41,"a"],["Dory's Embrace","Back",60,"x","Fallback; guide says it is not a good choice for Rogues"],["Shallow-grave Trousers","Legs",75,"x","Fallback; guide advises against spending badges on them"],["Brooch of Deftness","Neck",35,"x","Not recommended"]]}}});
+const WH="https://www.wowhead.com/tbc/";
+const SLUG={"Shaman/Elemental":"elemental-shaman-dps","Shaman/Enhancement":"enhancement-shaman-dps","Shaman/Restoration":"shaman-healer","Paladin/Protection":"paladin-tank","Paladin/Retribution":"retribution-paladin-dps","Paladin/Holy":"holy-paladin-healer","Warrior/Fury":"fury-warrior-dps","Warrior/Arms":"arms-warrior-dps","Warrior/Protection":"protection-warrior-tank","Warlock/Destruction":"destruction-warlock-dps","Warlock/Affliction":"affliction-warlock-dps","Warlock/Demonology":"demonology-warlock-dps","Druid/Balance":"balance-druid-dps","Druid/Feral DPS":"feral-druid-dps","Druid/Feral Tank":"feral-druid-tank","Druid/Restoration":"druid-healer","Hunter/Beast Mastery":"beast-mastery-hunter-dps","Hunter/Marksmanship":"marksmanship-hunter-dps","Hunter/Survival":"survival-hunter-dps","Mage/Arcane":"arcane-mage-dps","Mage/Fire":"fire-mage-dps","Mage/Frost":"frost-mage-dps","Priest/Holy":"priest-healer","Priest/Shadow":"shadow-priest-dps","Rogue/Combat":"rogue-dps"};
+const guide=(c,s)=>WH+"guide/"+SLUG[c+"/"+s]+"-za-phase-4-best-in-slot-gear-burning-crusade";
+const ITEM={"Libram of Repentance":"item=29388/libram-of-repentance"};
+const ilink=n=>ITEM[n]?WH+ITEM[n]:WH+"search?q="+encodeURIComponent(n);
+const sum=(l,t)=>l.filter(i=>i[3]==t).reduce((a,i)=>a+i[2],0);
+const all=[];for(const c in D)for(const s in D[c].s){const l=D[c].s[s];all.push({c,s,col:D[c].c,b:sum(l,"b"),a:sum(l,"a")})}
+const max=Math.max(...all.map(r=>r.b+r.a));
+let cur="Overview",sp=null;
+const $=id=>document.getElementById(id),root=document.documentElement;
+function pills(el,names,sel,fn,colFor){el.innerHTML="";names.forEach(n=>{const b=document.createElement("button");b.textContent=n;b.style.setProperty("--c",colFor(n));if(n==sel)b.className="on";b.onclick=()=>fn(n);el.appendChild(b)})}
+function go(c,s){cur=c;sp=s||(c=="Overview"?null:Object.keys(D[c].s)[0]);try{history.replaceState(null,"","#"+cur+(sp?"/"+sp:""))}catch(e){}draw()}
+function draw(){
+ pills($("cls"),["Overview",...Object.keys(D)],cur,n=>go(n),n=>n=="Overview"?"#8a6d1f":D[n].c);
+ const has=cur!="Overview";$("spl").style.display=has?"block":"none";
+ if(has)pills($("spc"),Object.keys(D[cur].s),sp,n=>go(cur,n),()=>D[cur].c);else $("spc").innerHTML="";
+ root.style.setProperty("--acc",has?D[cur].c:"#b8892b");
+ has?detail():overview()}
+function overview(){
+ let h='<div class="card"><b>Badges needed per spec</b><div class="leg"><b style="background:var(--acc)"></b>BiS-rated<b style="background:var(--acc);opacity:.4"></b>Alternatives</div>';
+ all.filter(r=>r.b+r.a>0||r.s!="Feral DPS").forEach(r=>{h+=`<div class="ov"><span>${r.s}</span><div class="stack"><i style="width:${r.b/max*100}%;background:${r.col}"></i><i style="width:${r.a/max*100}%;background:${r.col};opacity:.4"></i></div><b>${r.b+r.a}</b></div>`});
+ h+='<div class="leg">Click a class above to see the item list for each spec. Fury and Arms share all their items, so one warrior doing both needs 95 badges, not 190.</div></div>';
+ const bars=(title,rows,note)=>{const m=Math.max(...rows.map(r=>r[1]+(r[2]||0)));return '<div class="card"><b>'+title+'</b>'+rows.map(r=>`<div class="ov"><span>${r[0]}</span><div class="stack"><i style="width:${r[1]/m*100}%;background:var(--gold)"></i>${r[2]?`<i style="width:${r[2]/m*100}%;background:var(--gold);opacity:.4"></i>`:""}</div><b>${r[1]+(r[2]||0)}</b></div>`).join("")+'<div class="leg">'+note+'</div></div>'};
+ h+=bars("Badges per raid clear",[["Karazhan",22],["Black Temple",18],["Zul'Aman",13],["Serpentshrine",12],["Mount Hyjal",10],["Tempest Keep",8],["Gruul's Lair",5],["Magtheridon",3]],"Phase 4 raids. Most bosses drop 2; Attumen drops 1 and Prince Malchezaar 3. Per-boss splits for the other raids are not given by Wowhead. Sunwell (12) is Phase 5.");
+ h+=bars("Badges per heroic dungeon clear",[["The Botanica",5],["Shattered Halls",4,1],["Mana-Tombs",3,1],["Sethekk Halls",2,1],["Auchenai Crypts",2],["Old Hillsbrad",3],["Black Morass",3],["Slave Pens",3],["Steamvault",3],["Underbog",3],["Shadow Labyrinth",3],["Arcatraz",3],["Mechanar",3],["Ramparts",3],["Blood Furnace",3],["Magisters' Terrace",3]],"One badge per boss. Lighter bar = optional extra boss (Shattered Hand Executioner, Yor, Anzu). Heroic dailies in Shattrath give 2 badges each, up to 2 a day.");
+ h+='<div class="card"><b>Other badge sources</b><ul><li>Hex Lord? Hah! (Zul\'Aman chain): 5 badges, once.</li><li>Undercover Sister (after Blood of the Warlord): 10 badges, once.</li><li>Stasis Chambers of the Mana-Tombs: 5 badges, once, heroic only.</li><li>Doomwalker and Doom Lord Kazzak drop badges from Phase 4; Wowhead gives no amount.</li></ul></div>';
+ h+='<div class="card"><b>Coverage</b><ul><li>Covered: Shaman (3), Paladin (3), Warrior (3), Warlock (3), Druid (Balance, Feral Tank, Restoration), Hunter (3), Mage (3), Priest (Holy, Shadow), Rogue (Combat).</li><li>Not verified: Feral DPS, because its Wowhead page only loaded partially.</li><li>Many non-caster pages (Hunter, Mage, Balance, Shadow) list badge items only as options or pre-raid fallbacks, so their "BiS" total is 0 or small. Wowhead\'s Holy Priest page is a general Priest healing page. Same-slot duplicates are marked "Not counted", which is my call, not Wowhead\'s.</li></ul></div>';
+ h+='<div class="card"><b>Quick totals</b><ul>'+all.filter(r=>r.b+r.a>0).map(r=>`<li><b>${r.c} ${r.s}</b>: ${r.b} BiS, ${r.b+r.a} with alternatives${r.b==0?" (Ret has no BiS-rated badge item)":""}</li>`).join("")+'</ul></div>';
+ $("out").innerHTML=h}
+function detail(){
+ const l=D[cur].s[sp],b=sum(l,"b"),a=sum(l,"a");
+ if(!l.length){$("out").innerHTML='<div class="card"><b>Not verified</b><div class="note" style="margin-top:6px">Wowhead\'s Feral DPS Phase 4 page only loaded partially for me (it cut off partway through the Head slot), and the part I could read lists no badge items. Wolfshead Helm is the guide\'s head pick. I retried it and the site still cuts off there, and the other guide sites I tried cover Phase 5. Read the <a href="'+guide(cur,sp)+'" target="_blank" rel="noopener">full Wowhead guide</a> before spending badges.</div></div>';return}
+ let h=`<div class="leg" style="margin-top:14px"><a href="${guide(cur,sp)}" target="_blank" rel="noopener">Wowhead Phase 4 BiS guide for ${sp} ${cur} ↗</a></div><div class="stats" style="margin-top:8px"><div class="stat"><b>${b}</b><span>BiS-rated badges</span></div><div class="stat"><b>${a}</b><span>Alternatives</span></div><div class="stat"><b>${b+a}</b><span>Total</span></div></div><div class="card">`;
+ l.forEach(i=>{const tg={b:'<span class="tag bis">BiS</span>',a:'<span class="tag">Alt</span>',x:'<span class="tag x">Not counted</span>'}[i[3]];
+  h+=`<div class="item"><div><a class="nm" href="${ilink(i[0])}" target="_blank" rel="noopener">${i[0]}</a>${tg}<div class="sl">${i[1]}</div></div><div class="cost">${i[2]}</div><div class="bar"><i style="width:${i[2]/75*100}%;${i[3]=="x"?"opacity:.35":""}"></i></div>${i[4]?`<div class="note">${i[4]}</div>`:""}</div>`});
+ h+="</div>";
+ if(cur=="Warrior"&&sp!="Protection")h+='<div class="leg">Fury and Arms share Dory\'s Embrace and Master Assassin Wristwraps, so one warrior covering both specs needs 95 badges.</div>';
+ if(sp=="Retribution")h+='<div class="leg">Total of 66 assumes the Choker of Vile Intent; use Brooch of Deftness instead and it becomes 76.</div>';
+ $("out").innerHTML=h}
+$("th").onclick=()=>{const d=root.dataset.theme||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light");root.dataset.theme=d=="dark"?"light":"dark"};
+const [c0,s0]=decodeURIComponent(location.hash.slice(1)||"").split("/");
+go(D[c0]?c0:"Overview",D[c0]&&D[c0].s[s0]?s0:null);
+</script></body></html>
