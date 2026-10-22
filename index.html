@@ -89,6 +89,159 @@ const SLUG={"Shaman/Elemental":"elemental-shaman-dps","Shaman/Enhancement":"enha
 const guide=(c,s)=>WH+"guide/"+SLUG[c+"/"+s]+"-za-phase-4-best-in-slot-gear-burning-crusade";
 const ITEM={"Libram of Repentance":"item=29388/libram-of-repentance"};
 const ilink=n=>ITEM[n]?WH+ITEM[n]:WH+"search?q="+encodeURIComponent(n);
+const ZR={
+"Shaman/Elemental":`Brooch of Nature's Mercy|Neck|Akil'zon|BiS
+Loop of Cursed Bones|Neck|Zul'jin|BiS
+Footpads of Madness|Feet|Jan'alai|BiS
+Hex Shrunken Head|Trinket|Hex Lord Malacrass|BiS
+Shadowcaster's Drape|Back|1st timed chest|Option
+Avalanche Leggings|Legs|Halazzi|Option
+Mana Attuned Band|Ring|3rd timed chest|Option
+Wub's Cursed Hexblade|Weapon|Jan'alai|Option
+Amani Divining Staff|Weapon|2nd timed chest|Option`,
+"Shaman/Restoration":`Brooch of Nature's Mercy|Neck|Akil'zon|BiS
+Two-toed Sandals|Feet|Zul'jin|BiS
+Hex Lord's Voodoo Pauldrons|Shoulders|Hex Lord Malacrass|Option
+Cloak of Ancient Rituals|Back|Hex Lord Malacrass|Option
+Hauberk of the Empire's Champion|Chest|Zul'jin|Option
+Signet of the Quiet Forest|Ring|3rd timed chest|Option
+Tome of Diabolic Remedy|Trinket|Hex Lord Malacrass|Option
+Dark Blessing|Weapon|Zul'jin|Option
+Enamelled Disc of Mojo|Shield|Jan'alai|Option`,
+"Paladin/Protection":`Ancient Aqir Artifact|Trinket (mitigation)|Zul'jin|Great
+Hex Shrunken Head|Trinket (threat)|Hex Lord Malacrass|Great
+Battleworn Tuskguard|Head|Hex Lord Malacrass|Option
+Chestguard of the Warlord|Chest|Zul'jin|Option
+Jungle Stompers|Feet|Nalorakk|Option
+Signet of the Last Defender|Ring|Timed event|Option
+Amani Punisher|Weapon|Akil'zon|Option
+Bulwark of the Amani Empire|Shield|Jan'alai|Option`,
+"Paladin/Retribution":`Cloak of Fiends|Back|Timed event|BiS
+Berserker's Call|Trinket|Zul'jin|BiS
+Signet of Primal Wrath|Ring|Timed event|Option`,
+"Paladin/Holy":`Girdle of Stromgarde's Hope|Waist|Hex Lord Malacrass|BiS
+Cloak of Ancient Rituals|Back|Hex Lord Malacrass|Option
+Signet of the Quiet Forest|Ring|3rd timed chest|Option
+Dark Blessing|Weapon|Zul'jin|Option
+Enamelled Disc of Mojo|Shield|Jan'alai|Option`,
+"Warrior/Fury":`Signet of Primal Wrath|Ring|Timed event|BiS
+Berserker's Call|Trinket|Zul'jin|BiS
+Ancient Amani Longbow|Ranged|Zul'jin|BiS
+Bladeangel's Money Belt|Waist|Nalorakk|Option`,
+"Warrior/Protection":`Signet of Primal Wrath|Ring (threat)|Timed event|BiS
+Battleworn Tuskguard|Head|Hex Lord Malacrass|Option
+Chestguard of the Warlord|Chest|Zul'jin|Option
+Skullshatter Warboots|Feet|Halazzi|Option
+Akil'zon's Talonblade|Weapon|Akil'zon|Option
+Cleaver of the Unforgiving|Weapon|Zul'jin|Option
+Bulwark of the Amani Empire|Shield|Jan'alai|Option`,
+"Warlock/Destruction":`Brooch of Nature's Mercy|Neck|Akil'zon|BiS
+Mana Attuned Band|Ring|3rd timed chest|BiS
+Hex Shrunken Head|Trinket|Hex Lord Malacrass|BiS
+Shadowcaster's Drape|Back|1st timed chest|Good
+Fury of the Ursine|Wrist|Nalorakk|Good
+Loop of Cursed Bones|Neck|Zul'jin|Good
+Signet of the Quiet Forest|Ring|3rd timed chest|Good
+Blade of Twisted Visions|Weapon|Zul'jin|Good
+Wub's Cursed Hexblade|Weapon|Jan'alai|Good
+Footpads of Madness|Feet|Jan'alai|Good
+Hood of Hexing|Head|Hex Lord Malacrass|Mediocre
+Mantle of Ill Intent|Shoulders|1st timed chest|Mediocre
+Cloak of Ancient Rituals|Back|Hex Lord Malacrass|Mediocre
+Robe of Departed Spirits|Chest|Halazzi|Mediocre`,
+"Druid/Balance":`Brooch of Nature's Mercy|Neck|Akil'zon|BiS
+Mana Attuned Band|Ring|3rd timed chest|BiS
+Hex Shrunken Head|Trinket|Hex Lord Malacrass|BiS
+Wub's Cursed Hexblade|Weapon|Jan'alai|BiS
+Hood of Hexing|Head|Hex Lord Malacrass|Option
+Shadowcaster's Drape|Back|1st timed chest|Option
+Fury of the Ursine|Wrist|Nalorakk|Option
+Elunite Imbued Leggings|Legs|1st timed chest|Option
+Footpads of Madness|Feet|Jan'alai|Option
+Loop of Cursed Bones|Neck|Zul'jin|Option
+Amani Punisher|Weapon|Akil'zon|Option
+Amani Divining Staff|Weapon|2nd timed chest|Option`,
+"Druid/Feral Tank":`Berserker's Call|Trinket|Zul'jin|BiS
+Grimgrin Faceguard|Head|Zul'jin|Option
+Signet of Primal Wrath|Ring|Timed event|Option
+Staff of Primal Fury|Weapon|Hex Lord Malacrass|Option`,
+"Druid/Restoration":`Brooch of Nature's Mercy|Neck|Akil'zon|BiS
+Life-step Belt|Waist|1st timed chest|BiS
+Hood of the Third Eye|Head|Hex Lord Malacrass|Option
+Helm of Natural Regeneration|Head|Jan'alai|Option
+Cloak of Ancient Rituals|Back|Hex Lord Malacrass|Option
+Robes of Heavenly Purpose|Chest|Nalorakk|Option
+Two-toed Sandals|Feet|Zul'jin|Option
+Cord of Braided Troll Hair|Waist|1st timed chest|Option
+Signet of the Quiet Forest|Ring|3rd timed chest|Option
+Dark Blessing|Weapon|Zul'jin|Option
+Staff of Dark Mending|Weapon|2nd timed chest|Option`,
+"Hunter/Beast Mastery":`Cloak of Fiends|Back|Timed event|Option
+Bladeangel's Money Belt|Waist|Nalorakk|Option`,
+"Hunter/Marksmanship":`Cloak of Fiends|Back|Timed event|Option
+Bladeangel's Money Belt|Waist|Nalorakk|Option`,
+"Hunter/Survival":`Signet of Primal Wrath|Ring|Timed event|BiS
+Dagger of Bad Mojo|Weapon (x2)|Hex Lord Malacrass|BiS`,
+"Mage/Arcane":`Brooch of Nature's Mercy|Neck|Akil'zon|BiS
+Mana Attuned Band|Ring|3rd timed chest|BiS
+Hex Shrunken Head|Trinket|Hex Lord Malacrass|BiS
+Mantle of Ill Intent|Shoulders|1st timed chest|Option
+Shadowcaster's Drape|Back|1st timed chest|Option
+Robe of Departed Spirits|Chest|Halazzi|Option
+Footpads of Madness|Feet (AoE)|Jan'alai|Option
+Loop of Cursed Bones|Neck|Zul'jin|Option
+Blade of Twisted Visions|Weapon|Zul'jin|Option
+Wub's Cursed Hexblade|Weapon|Jan'alai|Option`,
+"Mage/Fire":`Hex Shrunken Head|Trinket|Hex Lord Malacrass|BiS
+Shadowcaster's Drape|Back|1st timed chest|Option
+Robe of Departed Spirits|Chest|Halazzi|Option
+Footpads of Madness|Feet|Jan'alai|Option
+Brooch of Nature's Mercy|Neck|Akil'zon|Option
+Loop of Cursed Bones|Neck|Zul'jin|Option
+Mana Attuned Band|Ring|3rd timed chest|Option
+Blade of Twisted Visions|Weapon|Zul'jin|Option`,
+"Priest/Holy":`Brooch of Nature's Mercy|Neck|Akil'zon|BiS
+Cloak of Ancient Rituals|Back|Hex Lord Malacrass|Great
+Robes of Heavenly Purpose|Chest|Nalorakk|Great
+Signet of the Quiet Forest|Ring|3rd timed chest|Great
+Dark Blessing|Weapon|Zul'jin|Great
+Two-toed Sandals|Feet|Zul'jin|Good
+Cord of Braided Troll Hair|Waist|1st timed chest|Good
+Hood of the Third Eye|Head|Hex Lord Malacrass|Viable
+Tome of Diabolic Remedy|Trinket|Hex Lord Malacrass|Viable`,
+"Priest/Shadow":`Loop of Cursed Bones|Neck|Zul'jin|BiS
+Hex Shrunken Head|Trinket|Hex Lord Malacrass|BiS
+Shadowcaster's Drape|Back|1st timed chest|Option
+Footpads of Madness|Feet|Jan'alai|Option
+Mana Attuned Band|Ring|3rd timed chest|Option
+Hood of Hexing|Head|Hex Lord Malacrass|Fallback
+Mantle of Ill Intent|Shoulders|1st timed chest|Fallback
+Robe of Departed Spirits|Chest|Halazzi|Fallback
+Amani Punisher|Weapon|Akil'zon|Fallback
+Wub's Cursed Hexblade|Weapon|Jan'alai|Fallback
+Amani Divining Staff|Weapon|2nd timed chest|Fallback`,
+"Rogue/Combat":`Signet of Primal Wrath|Ring|3rd timed chest|BiS
+Berserker's Call|Trinket|Zul'jin|BiS
+Grimgrin Faceguard|Head|Zul'jin|Option
+Shoulderpads of Dancing Blades|Shoulders|Halazzi|Option
+Cloak of Fiends|Back|1st timed chest|Option
+Shadowtooth Trollskin Cuirass|Chest|Jan'alai|Option
+Bladeangel's Money Belt|Waist|Nalorakk|Option
+Heartless|Main hand|Hex Lord Malacrass|Option
+Akil'zon's Talonblade|Off hand|Akil'zon|Option
+Ancient Amani Longbow|Ranged|2nd timed chest|Option`};
+ZR["Warrior/Arms"]=ZR["Warrior/Fury"];
+ZR["Warlock/Affliction"]=ZR["Warlock/Destruction"];
+const ZA={};for(const k in ZR)ZA[k]=ZR[k].split("\n").map(r=>r.split("|"));
+const ZNA=["Shaman/Enhancement","Warlock/Demonology","Mage/Frost","Druid/Feral DPS"];
+
+function zaHTML(c,s){
+ const k=c+"/"+s,g=guide(c,s);
+ let o='<div class="card"><b>Zul\'Aman BiS gear</b><div class="leg" style="margin:4px 0 8px">Drops from the Zul\'Aman raid, as rated by the <a href="'+g+'" target="_blank" rel="noopener">Wowhead Phase 4 guide</a>. Timed chests are the Zul\'Aman timed-run rewards.</div>';
+ if(ZNA.includes(k))return o+'<div class="note" style="margin-top:6px">Not available: Wowhead\'s page for this spec returned no gear tables when I fetched it. Open the guide above for the Zul\'Aman picks.</div></div>';
+ const l=ZA[k]||[];
+ l.forEach(i=>{const best=/^(BiS|Best)/.test(i[3]);o+=`<div class="item"><div><a class="nm" href="${ilink(i[0])}" target="_blank" rel="noopener">${i[0]}</a><span class="tag${best?" bis":""}">${i[3]}</span><div class="sl">${i[1]} &middot; ${i[2]}</div></div></div>`});
+ return o+'</div>'}
 const sum=(l,t)=>l.filter(i=>i[3]==t).reduce((a,i)=>a+i[2],0);
 const all=[];for(const c in D)for(const s in D[c].s){const l=D[c].s[s];all.push({c,s,col:D[c].c,b:sum(l,"b"),a:sum(l,"a")})}
 const max=Math.max(...all.map(r=>r.b+r.a));
@@ -115,11 +268,11 @@ function overview(){
  $("out").innerHTML=h}
 function detail(){
  const l=D[cur].s[sp],b=sum(l,"b"),a=sum(l,"a");
- if(!l.length){$("out").innerHTML='<div class="card"><b>Not verified</b><div class="note" style="margin-top:6px">Wowhead\'s Feral DPS Phase 4 page only loaded partially for me (it cut off partway through the Head slot), and the part I could read lists no badge items. Wolfshead Helm is the guide\'s head pick. I retried it and the site still cuts off there, and the other guide sites I tried cover Phase 5. Read the <a href="'+guide(cur,sp)+'" target="_blank" rel="noopener">full Wowhead guide</a> before spending badges.</div></div>';return}
- let h=`<div class="leg" style="margin-top:14px"><a href="${guide(cur,sp)}" target="_blank" rel="noopener">Wowhead Phase 4 BiS guide for ${sp} ${cur} ↗</a></div><div class="stats" style="margin-top:8px"><div class="stat"><b>${b}</b><span>BiS-rated badges</span></div><div class="stat"><b>${a}</b><span>Alternatives</span></div><div class="stat"><b>${b+a}</b><span>Total</span></div></div><div class="card">`;
+ if(!l.length){$("out").innerHTML='<div class="card"><b>Not verified</b><div class="note" style="margin-top:6px">Wowhead\'s Feral DPS Phase 4 page only loaded partially for me (it cut off partway through the Head slot), and the part I could read lists no badge items. Wolfshead Helm is the guide\'s head pick. I retried it and the site still cuts off there, and the other guide sites I tried cover Phase 5. Read the <a href="'+guide(cur,sp)+'" target="_blank" rel="noopener">full Wowhead guide</a> before spending badges.</div></div>'+zaHTML(cur,sp);return}
+ let h=`<div class="leg" style="margin-top:14px"><a href="${guide(cur,sp)}" target="_blank" rel="noopener">Wowhead Phase 4 BiS guide for ${sp} ${cur} ↗</a></div><div class="stats" style="margin-top:8px"><div class="stat"><b>${b}</b><span>BiS-rated badges</span></div><div class="stat"><b>${a}</b><span>Alternatives</span></div><div class="stat"><b>${b+a}</b><span>Total</span></div></div><div class="lbl" style="margin-top:14px">Badge of Justice gear (G'eras)</div><div class="card" style="margin-top:6px">`;
  l.forEach(i=>{const tg={b:'<span class="tag bis">BiS</span>',a:'<span class="tag">Alt</span>',x:'<span class="tag x">Not counted</span>'}[i[3]];
   h+=`<div class="item"><div><a class="nm" href="${ilink(i[0])}" target="_blank" rel="noopener">${i[0]}</a>${tg}<div class="sl">${i[1]}</div></div><div class="cost">${i[2]}</div><div class="bar"><i style="width:${i[2]/75*100}%;${i[3]=="x"?"opacity:.35":""}"></i></div>${i[4]?`<div class="note">${i[4]}</div>`:""}</div>`});
- h+="</div>";
+ h+="</div>"+zaHTML(cur,sp);
  if(cur=="Warrior"&&sp!="Protection")h+='<div class="leg">Fury and Arms share Dory\'s Embrace and Master Assassin Wristwraps, so one warrior covering both specs needs 95 badges.</div>';
  if(sp=="Retribution")h+='<div class="leg">Total of 66 assumes the Choker of Vile Intent; use Brooch of Deftness instead and it becomes 76.</div>';
  $("out").innerHTML=h}
